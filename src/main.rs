@@ -17,11 +17,6 @@ fn main() {
         val: bool
     }
 
-    enum DataType {
-        Unsigned,
-        Integer,
-        Boolean
-    }
 
     #[derive(Eq, Debug)]
     struct GenericUpdate<T> {
@@ -29,16 +24,12 @@ fn main() {
         data: T
     }
 
-    type IntegerUpdate = GenericUpdate<Integer>;
-    type UnsignedUpdate = GenericUpdate<Unsigned>;
-    type BooleanUpdate = GenericUpdate<Boolean>;
 
-
-
+    #[derive(Ord, PartialOrd, Eq, PartialEq, Debug)]
     enum Update {
-        IntegerUpdate,
-        UnsignedUpdate,
-        BooleanUpdate
+        UnsignedUpdate(GenericUpdate<Unsigned>),
+        IntegerUpdate(GenericUpdate<Integer>),
+        BooleanUpdate(GenericUpdate<Boolean>)
     }
 
 
@@ -61,49 +52,49 @@ fn main() {
         }
     }
 
-    let i1 = IntegerUpdate {
-        timestamp: 2,
-        data: Integer {
-            val: 1
-        }
-    };
-
-    let i2 = IntegerUpdate {
+    let i1 = Update::IntegerUpdate(GenericUpdate::<Integer> {
         timestamp: 3,
         data: Integer {
+            val: -1
+        }
+    });
+
+    let i2 = Update::IntegerUpdate( GenericUpdate::<Integer> {
+        timestamp: 3,
+        data: Integer {
+            val: -13
+        }
+    });
+
+    let u1 = Update::UnsignedUpdate( GenericUpdate::<Unsigned> {
+        timestamp: 5,
+        data: Unsigned {
             val: 1
         }
-    };
+    });
 
-    let f1 = UnsignedUpdate {
+    let u2 = Update::UnsignedUpdate( GenericUpdate::<Unsigned> {
         timestamp: 3,
         data: Unsigned {
             val: 2
         }
-    };
+    });
 
-    let f2 = UnsignedUpdate {
-        timestamp: 2,
-        data: Unsigned {
-            val: 2
-        }
-    };
-
-    let b1 = BooleanUpdate {
-        timestamp: 0,
-        data: Boolean {
-            val: false
-        }
-    };
-
-    let b2 = BooleanUpdate {
-        timestamp: 9,
+    let b1 = Update::BooleanUpdate( GenericUpdate::<Boolean> {
+        timestamp: 10,
         data: Boolean {
             val: true
         }
-    };
+    });
 
-    let mut vs = vec![i2,i1];
+    let b2 = Update::BooleanUpdate( GenericUpdate::<Boolean> {
+        timestamp: 12,
+        data: Boolean {
+            val: false
+        }
+    });
+
+    let mut vs: Vec<Update> = vec![i1,i2,b1,b2,u1,u2];
     println!("{:?}", vs);
     vs.sort();
     println!("{:?}", vs);

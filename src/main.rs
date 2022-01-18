@@ -25,7 +25,7 @@ fn main() {
     }
 
 
-    #[derive(Ord, PartialOrd, Eq, PartialEq, Debug)]
+    #[derive(Eq, PartialEq, Debug)]
     enum Update {
         UnsignedUpdate(GenericUpdate<Unsigned>),
         IntegerUpdate(GenericUpdate<Integer>),
@@ -49,6 +49,99 @@ fn main() {
     impl<T: Eq> Ord for GenericUpdate<T> {
         fn cmp(&self, other: &Self) -> Ordering {
             self.timestamp.cmp(&other.timestamp)
+        }
+    }
+    impl PartialOrd for Update {
+        fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+            match self {
+                Update::IntegerUpdate(a) => {
+                    match other {
+                        Update::UnsignedUpdate(b) => {
+                            Some(a.timestamp.cmp(&b.timestamp))
+                        },
+                        Update::BooleanUpdate(b) => {
+                            Some(a.timestamp.cmp(&b.timestamp))
+                        },
+                        Update::IntegerUpdate(b) => {
+                            Some(a.timestamp.cmp(&b.timestamp))
+                        }
+                    }
+                },
+                Update::BooleanUpdate(a) => {
+                    match other {
+                        Update::UnsignedUpdate(b) => {
+                            Some(a.timestamp.cmp(&b.timestamp))
+                        },
+                        Update::BooleanUpdate(b) => {
+                            Some(a.timestamp.cmp(&b.timestamp))
+                        },
+                        Update::IntegerUpdate(b) => {
+                            Some(a.timestamp.cmp(&b.timestamp))
+                        }
+                    }
+                },
+                Update::UnsignedUpdate(a) => {
+                    match other {
+                        Update::UnsignedUpdate(b) => {
+                            Some(a.timestamp.cmp(&b.timestamp))
+                        },
+                        Update::BooleanUpdate(b) => {
+                            Some(a.timestamp.cmp(&b.timestamp))
+                        },
+                        Update::IntegerUpdate(b) => {
+                            Some(a.timestamp.cmp(&b.timestamp))
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+
+    impl Ord for Update {
+        fn cmp(&self, other: &Self) -> Ordering {
+            match self {
+                Update::IntegerUpdate(a) => {
+                    match other {
+                        Update::UnsignedUpdate(b) => {
+                            a.timestamp.cmp(&b.timestamp)
+                        },
+                        Update::BooleanUpdate(b) => {
+                            a.timestamp.cmp(&b.timestamp)
+                        },
+                        Update::IntegerUpdate(b) => {
+                            a.timestamp.cmp(&b.timestamp)
+                        }
+                    }
+                },
+                Update::BooleanUpdate(a) => {
+                    match other {
+                        Update::UnsignedUpdate(b) => {
+                            a.timestamp.cmp(&b.timestamp)
+                        },
+                        Update::BooleanUpdate(b) => {
+                            a.timestamp.cmp(&b.timestamp)
+                        },
+                        Update::IntegerUpdate(b) => {
+                            a.timestamp.cmp(&b.timestamp)
+                        }
+                    }
+                },
+                Update::UnsignedUpdate(a) => {
+                    match other {
+                        Update::UnsignedUpdate(b) => {
+                            a.timestamp.cmp(&b.timestamp)
+                        },
+                        Update::BooleanUpdate(b) => {
+                            a.timestamp.cmp(&b.timestamp)
+                        },
+                        Update::IntegerUpdate(b) => {
+                            a.timestamp.cmp(&b.timestamp)
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -88,7 +181,7 @@ fn main() {
     });
 
     let b2 = Update::BooleanUpdate( GenericUpdate::<Boolean> {
-        timestamp: 12,
+        timestamp: 1,
         data: Boolean {
             val: false
         }

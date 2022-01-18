@@ -4,192 +4,112 @@ fn main() {
 
     #[derive(Eq, PartialEq, Debug)]
     struct Unsigned {
+        pub timestamp: u32,
         val: u8
     }
 
     #[derive(Eq, PartialEq, Debug)]
     struct Integer {
+        pub timestamp: u32,
         val: i32
     }
 
     #[derive(Eq, PartialEq, Debug)]
     struct Boolean {
+        pub timestamp: u32,
         val: bool
     }
 
 
-    #[derive(Eq, Debug)]
-    struct GenericUpdate<T> {
-        pub timestamp: u32,
-        data: T
-    }
-
 
     #[derive(Eq, PartialEq, Debug)]
     enum Update {
-        UnsignedUpdate(GenericUpdate<Unsigned>),
-        IntegerUpdate(GenericUpdate<Integer>),
-        BooleanUpdate(GenericUpdate<Boolean>)
-    }
-
-
-    impl<T: Eq> PartialEq for GenericUpdate<T> {
-        fn eq(&self, other: &Self) -> bool {
-            self.timestamp == other.timestamp
-        }
-    }
-
-
-    impl<T: Eq> PartialOrd for GenericUpdate<T> {
-        fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-            Some(self.timestamp.cmp(&other.timestamp))
-        }
-    }
-
-    impl<T: Eq> Ord for GenericUpdate<T> {
-        fn cmp(&self, other: &Self) -> Ordering {
-            self.timestamp.cmp(&other.timestamp)
-        }
-    }
-    impl PartialOrd for Update {
-        fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-            match self {
-                Update::IntegerUpdate(a) => {
-                    match other {
-                        Update::UnsignedUpdate(b) => {
-                            Some(a.timestamp.cmp(&b.timestamp))
-                        },
-                        Update::BooleanUpdate(b) => {
-                            Some(a.timestamp.cmp(&b.timestamp))
-                        },
-                        Update::IntegerUpdate(b) => {
-                            Some(a.timestamp.cmp(&b.timestamp))
-                        }
-                    }
-                },
-                Update::BooleanUpdate(a) => {
-                    match other {
-                        Update::UnsignedUpdate(b) => {
-                            Some(a.timestamp.cmp(&b.timestamp))
-                        },
-                        Update::BooleanUpdate(b) => {
-                            Some(a.timestamp.cmp(&b.timestamp))
-                        },
-                        Update::IntegerUpdate(b) => {
-                            Some(a.timestamp.cmp(&b.timestamp))
-                        }
-                    }
-                },
-                Update::UnsignedUpdate(a) => {
-                    match other {
-                        Update::UnsignedUpdate(b) => {
-                            Some(a.timestamp.cmp(&b.timestamp))
-                        },
-                        Update::BooleanUpdate(b) => {
-                            Some(a.timestamp.cmp(&b.timestamp))
-                        },
-                        Update::IntegerUpdate(b) => {
-                            Some(a.timestamp.cmp(&b.timestamp))
-                        }
-                    }
-                }
-            }
-        }
+        UnsignedUpdate(Unsigned),
+        IntegerUpdate(Integer),
+        BooleanUpdate(Boolean)
     }
 
 
 
-    impl Ord for Update {
-        fn cmp(&self, other: &Self) -> Ordering {
-            match self {
-                Update::IntegerUpdate(a) => {
-                    match other {
-                        Update::UnsignedUpdate(b) => {
-                            a.timestamp.cmp(&b.timestamp)
-                        },
-                        Update::BooleanUpdate(b) => {
-                            a.timestamp.cmp(&b.timestamp)
-                        },
-                        Update::IntegerUpdate(b) => {
-                            a.timestamp.cmp(&b.timestamp)
-                        }
-                    }
-                },
-                Update::BooleanUpdate(a) => {
-                    match other {
-                        Update::UnsignedUpdate(b) => {
-                            a.timestamp.cmp(&b.timestamp)
-                        },
-                        Update::BooleanUpdate(b) => {
-                            a.timestamp.cmp(&b.timestamp)
-                        },
-                        Update::IntegerUpdate(b) => {
-                            a.timestamp.cmp(&b.timestamp)
-                        }
-                    }
-                },
-                Update::UnsignedUpdate(a) => {
-                    match other {
-                        Update::UnsignedUpdate(b) => {
-                            a.timestamp.cmp(&b.timestamp)
-                        },
-                        Update::BooleanUpdate(b) => {
-                            a.timestamp.cmp(&b.timestamp)
-                        },
-                        Update::IntegerUpdate(b) => {
-                            a.timestamp.cmp(&b.timestamp)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    let i1 = Update::IntegerUpdate(GenericUpdate::<Integer> {
+    let i1 = Update::IntegerUpdate(Integer {
         timestamp: 3,
-        data: Integer {
-            val: -1
-        }
+        val: -1
     });
 
-    let i2 = Update::IntegerUpdate( GenericUpdate::<Integer> {
+    let i2 = Update::IntegerUpdate( Integer {
         timestamp: 3,
-        data: Integer {
-            val: -13
-        }
+        val: -13
     });
 
-    let u1 = Update::UnsignedUpdate( GenericUpdate::<Unsigned> {
+    let u1 = Update::UnsignedUpdate( Unsigned {
         timestamp: 5,
-        data: Unsigned {
-            val: 1
-        }
+        val: 1
     });
 
-    let u2 = Update::UnsignedUpdate( GenericUpdate::<Unsigned> {
-        timestamp: 3,
-        data: Unsigned {
-            val: 2
-        }
+    let u2 = Update::UnsignedUpdate( Unsigned {
+        timestamp: 300,
+        val: 2
     });
 
-    let b1 = Update::BooleanUpdate( GenericUpdate::<Boolean> {
+    let b1 = Update::BooleanUpdate( Boolean {
         timestamp: 10,
-        data: Boolean {
             val: true
-        }
     });
 
-    let b2 = Update::BooleanUpdate( GenericUpdate::<Boolean> {
+    let b2 = Update::BooleanUpdate( Boolean {
         timestamp: 1,
-        data: Boolean {
-            val: false
-        }
+        val: false
     });
 
     let mut vs: Vec<Update> = vec![i1,i2,b1,b2,u1,u2];
     println!("{:?}", vs);
-    vs.sort();
+    vs.sort_by(|a, b|  
+        match a {
+            Update::IntegerUpdate(a) => {
+                match b  {
+                    Update::IntegerUpdate(b)  => {
+                        a.timestamp.cmp(&b.timestamp)
+                    },
+                    Update::BooleanUpdate(b)  => {
+                        a.timestamp.cmp(&b.timestamp)
+                    },
+                    Update::UnsignedUpdate(b)  => {
+                        a.timestamp.cmp(&b.timestamp)
+                    },
+                    
+                }
+            },
+            Update::BooleanUpdate(a) => {
+                match b  {
+                    Update::IntegerUpdate(b)  => {
+                        a.timestamp.cmp(&b.timestamp)
+                    },
+                    Update::BooleanUpdate(b)  => {
+                        a.timestamp.cmp(&b.timestamp)
+                    },
+                    Update::UnsignedUpdate(b)  => {
+                        a.timestamp.cmp(&b.timestamp)
+                    },
+                    
+                }
+            },
+            Update::UnsignedUpdate(a) => {
+                match b  {
+                    Update::IntegerUpdate(b)  => {
+                        a.timestamp.cmp(&b.timestamp)
+                    },
+                    Update::BooleanUpdate(b)  => {
+                        a.timestamp.cmp(&b.timestamp)
+                    },
+                    Update::UnsignedUpdate(b)  => {
+                        a.timestamp.cmp(&b.timestamp)
+                    },
+                    
+                }
+            }
+        }
+    );
+        
     println!("{:?}", vs);
 
 }
